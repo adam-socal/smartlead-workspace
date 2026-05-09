@@ -8,12 +8,15 @@ End-to-end recipe for shipping one cold-email campaign. The orchestrator owns th
 
 ## The four phases
 
-| # | Phase | Output file | Instruction file |
-| --- | --- | --- | --- |
-| 1 | STRATEGY | `campaign-strategy.md` | guided write (this file) |
-| 2 | LEADS | `leads.csv` | `find-leads` |
-| 3 | COPY | `copy.md` | guided write (this file) |
-| 4 | DEPLOY | `campaign-status.md` | `create-campaign` |
+| #   | Phase       | Output file            | Instruction file         |
+| --- | ----------- | ---------------------- | ------------------------ |
+| 1   | STRATEGY    | `campaign-strategy.md` | guided write (this file) |
+| 2a  | LEADS       | `leads-raw.csv`        | `find-leads`             |
+| 2b  | STAGE LEADS | `leads.csv`            | `stage-leads`            |
+| 3   | COPY        | `copy.md`              | guided write (this file) |
+| 4   | DEPLOY      | `campaign-status.md`   | `create-campaign`        |
+
+**Phase 2a vs 2b:** Use `find-leads` when pulling leads directly from Smart Prospects or Prospeo via CLI. Use `stage-leads` when the user is dropping in a CSV from an external source (Apollo, Clay, scraped data, etc.). Both produce the same `leads.csv` output. Run `stage-leads` after `find-leads` if deduplication across campaigns is needed.
 
 Run them in order. Each phase reads from the prior outputs.
 
@@ -65,22 +68,20 @@ Write to `workspace/clients/{client}/campaigns/{slug}/campaign-strategy.md`.
 
 ## Phase 2: LEADS
 
-Goal: a verified `leads.csv` with at least 200 rows in the campaign folder.
+Goal: a clean, deduplicated `leads.csv` with at minimum `email`, `first_name`, `last_name`, `company_name` columns.
 
-Follow the `find-leads` instructions, passing:
+**If pulling leads via CLI (Smart Prospects or Prospeo):**
+Follow the `find-leads` instructions, passing the campaign folder path, ICP block, and provider choice.
 
-- the campaign folder path
-- the ICP block from `campaign-strategy.md` (job titles, company size, industry, location)
-- a **provider** — `smartlead` (Smart Prospects) or `prospeo`. Default to `smartlead`. Prefer `prospeo` when the strategy doc calls for filters Smart Prospects doesn't expose (funding stage, technology stack, hiring velocity, NAICS/SIC, headcount-growth-by-department) or when the user explicitly asks.
+**If the user is dropping in a CSV from an external source (Apollo, Clay, scraped data, etc.):**
+Follow the `stage-leads` instructions instead. The user drops their file as `leads-raw.csv` in the campaign folder and `stage-leads` handles column mapping, email validation, deduplication across campaigns, and sender assignment.
 
-Verify before moving on:
+Either path ends with the same output. Verify before moving on:
 
 ```bash
 wc -l "workspace/clients/{client}/campaigns/{slug}/leads.csv"
 head -3 "workspace/clients/{client}/campaigns/{slug}/leads.csv"
 ```
-
-The CSV must contain at minimum: `email`, `first_name`, `last_name`, `company_name`.
 
 ---
 
