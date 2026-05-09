@@ -10,10 +10,10 @@ Supports two providers. The **output is identical** regardless of provider — t
 
 ## Providers
 
-| Provider | CLI | Auth | What it gives you | Cost model |
-| --- | --- | --- | --- | --- |
-| **Smart Prospects** (default) | `smartlead prospect ...` | `SMARTLEAD_API_KEY` | Verified-email rows in one search call, simple filter shape | Bundled with your Smartlead plan |
-| **Prospeo** | `node .claude/skills/prospeo/scripts/prospeo.mjs ...` | `PROSPEO_API_KEY` | 200M+ contacts, 30+ filters incl. funding stage, technology stack, headcount growth, NAICS/SIC | Per-credit: 1 credit/search-page (25 rows) + 1 credit/verified-email enrichment hit |
+| Provider                      | CLI                                                   | Auth                | What it gives you                                                                              | Cost model                                                                          |
+| ----------------------------- | ----------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Smart Prospects** (default) | `smartlead prospect ...`                              | `SMARTLEAD_API_KEY` | Verified-email rows in one search call, simple filter shape                                    | Bundled with your Smartlead plan                                                    |
+| **Prospeo**                   | `node .claude/skills/prospeo/scripts/prospeo.mjs ...` | `PROSPEO_API_KEY`   | 200M+ contacts, 30+ filters incl. funding stage, technology stack, headcount growth, NAICS/SIC | Per-credit: 1 credit/search-page (25 rows) + 1 credit/verified-email enrichment hit |
 
 ## When to use which
 
@@ -49,10 +49,10 @@ If the strategy mentions a provider-specific signal — e.g. "Series B SaaS" (fu
 
 Either honor the orchestrator's choice, or ask the user with a clear default. Then verify the provider is set up:
 
-| Provider | Verify command | If it fails |
-| --- | --- | --- |
-| Smart Prospects | `smartlead campaigns list` | Follow `install-smartlead` instructions |
-| Prospeo | `node .claude/skills/prospeo/scripts/prospeo.mjs account` (free) | Follow `prospeo` setup instructions |
+| Provider        | Verify command                                                   | If it fails                             |
+| --------------- | ---------------------------------------------------------------- | --------------------------------------- |
+| Smart Prospects | `smartlead campaigns list`                                       | Follow `install-smartlead` instructions |
+| Prospeo         | `node .claude/skills/prospeo/scripts/prospeo.mjs account` (free) | Follow `prospeo` setup instructions     |
 
 Do not skip the verify call. If the API key is missing or wrong, stop here.
 
@@ -138,6 +138,7 @@ Write `filters.json` inside the campaign folder:
 **Before writing enum values, check `.claude/skills/prospeo/reference/` for the canonical strings.** Common surprises: `"Software Development"` not `"Software"`, `"Founder/Owner"` with a slash, headcount bands like `"51-100"` not `"51-200"`. Guessing costs an `INVALID_FILTERS` roundtrip.
 
 Hard rules from the API:
+
 - **At least one filter must use `include` / positive selection** — pure-exclude searches are rejected.
 - **Page size is fixed at 25.** The CLI handles pagination internally.
 
@@ -155,6 +156,7 @@ node ../../../../.claude/skills/prospeo/scripts/prospeo.mjs find-leads \
 (Adjust the relative path depth based on where the campaign folder sits.)
 
 The CLI prints a final summary line like:
+
 > `Done. Wrote 187 leads to leads.csv. Credits spent: 8 (search) + 187 (enrich) = 195. Unmatched: 13.`
 
 Warn the user before running with `--mobile` — it's 10x the credit cost.
@@ -183,11 +185,11 @@ If the row count is far below target, tell the orchestrator the number you got a
 
 Both paths produce a CSV that, at minimum, contains:
 
-| Column | Required |
-| --- | --- |
-| `email` | yes |
-| `first_name` | yes |
-| `last_name` | yes |
-| `company_name` | yes |
+| Column         | Required |
+| -------------- | -------- |
+| `email`        | yes      |
+| `first_name`   | yes      |
+| `last_name`    | yes      |
+| `company_name` | yes      |
 
 Additional columns are allowed. The `create-campaign` instructions handle any superset of the four required columns safely.
