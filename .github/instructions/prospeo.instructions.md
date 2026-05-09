@@ -8,14 +8,14 @@ End-to-end instructions for the Prospeo B2B contact API. Drives the in-repo Pros
 
 ## At a glance
 
-| You want to… | Run |
-| --- | --- |
-| Check plan + remaining credits (free) | `node .claude/skills/prospeo/scripts/prospeo.mjs account` |
-| Search persons by ICP filters | `prospeo.mjs search-person --from-json filters.json --page 1 --output page1.json` |
-| Search companies | `prospeo.mjs search-company --from-json filters.json --page 1` |
-| Enrich one person → verified email | `prospeo.mjs enrich-person --from-json one.json --verified-email` |
-| Enrich up to 50 people in one call | `prospeo.mjs bulk-enrich-person --from-json batch.json --verified-email` |
-| Run search → bulk-enrich → leads.csv | `prospeo.mjs find-leads --from-json filters.json --target 200 --output leads.csv` |
+| You want to…                          | Run                                                                               |
+| ------------------------------------- | --------------------------------------------------------------------------------- |
+| Check plan + remaining credits (free) | `node .claude/skills/prospeo/scripts/prospeo.mjs account`                         |
+| Search persons by ICP filters         | `prospeo.mjs search-person --from-json filters.json --page 1 --output page1.json` |
+| Search companies                      | `prospeo.mjs search-company --from-json filters.json --page 1`                    |
+| Enrich one person → verified email    | `prospeo.mjs enrich-person --from-json one.json --verified-email`                 |
+| Enrich up to 50 people in one call    | `prospeo.mjs bulk-enrich-person --from-json batch.json --verified-email`          |
+| Run search → bulk-enrich → leads.csv  | `prospeo.mjs find-leads --from-json filters.json --target 200 --output leads.csv` |
 
 Full help: `node .claude/skills/prospeo/scripts/prospeo.mjs help`
 
@@ -63,6 +63,7 @@ Send this message to the user:
 > 5. Paste it here and send.
 
 When the user pastes the key:
+
 - Sanity-check it looks like an API key (long string, no spaces, ≥~20 chars).
 - **Do not echo the key back in chat.**
 - Edit `.env`, replacing the `PROSPEO_API_KEY=your-key-here` line with the real value.
@@ -115,25 +116,26 @@ node .claude/skills/prospeo/scripts/prospeo.mjs search-person --from-json filter
 
 Useful filter keys:
 
-| Filter | Shape | Reference file |
-| --- | --- | --- |
-| `person_seniority` | `{include: [...]}` | `reference/seniorities.txt` |
-| `person_job_title` | `{include: [...], match_only_exact_job_titles: false}` | free-text, validate via Prospeo Search Suggestions API |
-| `person_department` | `{include: [...]}` | `reference/departments.txt` (Normal Departments section) |
-| `person_location_search` | `{include: [...]}` | free-text location strings |
-| `company_industry` | `{include: [...]}` | `reference/industries.txt` |
-| `company_headcount_range` | Array of band strings | `reference/employee-ranges.txt` |
-| `company_funding` | `{stage, funding_date, last_funding, total_funding}` | `reference/funding-stages.txt` |
-| `company_technology` | `{include: [...]}` | `reference/technologies.txt` |
-| `company_naics` | `{include: [int]}` | `reference/naics-codes.txt` |
-| `company_sics` | `{include: [int]}` | `reference/sic-codes.txt` |
-| `company_headcount_growth` | `{timeframe_month, min, max, departments}` | `reference/departments.txt` (Headcount Growth Departments section — different from Normal Departments) |
+| Filter                     | Shape                                                  | Reference file                                                                                         |
+| -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `person_seniority`         | `{include: [...]}`                                     | `reference/seniorities.txt`                                                                            |
+| `person_job_title`         | `{include: [...], match_only_exact_job_titles: false}` | free-text, validate via Prospeo Search Suggestions API                                                 |
+| `person_department`        | `{include: [...]}`                                     | `reference/departments.txt` (Normal Departments section)                                               |
+| `person_location_search`   | `{include: [...]}`                                     | free-text location strings                                                                             |
+| `company_industry`         | `{include: [...]}`                                     | `reference/industries.txt`                                                                             |
+| `company_headcount_range`  | Array of band strings                                  | `reference/employee-ranges.txt`                                                                        |
+| `company_funding`          | `{stage, funding_date, last_funding, total_funding}`   | `reference/funding-stages.txt`                                                                         |
+| `company_technology`       | `{include: [...]}`                                     | `reference/technologies.txt`                                                                           |
+| `company_naics`            | `{include: [int]}`                                     | `reference/naics-codes.txt`                                                                            |
+| `company_sics`             | `{include: [int]}`                                     | `reference/sic-codes.txt`                                                                              |
+| `company_headcount_growth` | `{timeframe_month, min, max, departments}`             | `reference/departments.txt` (Headcount Growth Departments section — different from Normal Departments) |
 
 ### `enrich-person` and `bulk-enrich-person`
 
 Looks up a person and returns identity + employment + (optionally) verified email + (optionally) mobile. Costs **1 credit per match**, **10 credits per match if `--mobile`**. No charge if no match. Re-enriching the same record is free for account lifetime.
 
 Accepted input identifiers (any one is enough):
+
 - `linkedin_url`
 - `email` (reverse-enrichment)
 - `person_id` from a search result
@@ -162,7 +164,12 @@ Bulk (up to **50** records per call):
   "data": [
     { "linkedin_url": "https://linkedin.com/in/...", "identifier": "lead-1" },
     { "person_id": "abc123", "identifier": "lead-2" },
-    { "first_name": "Sara", "last_name": "Lin", "company_website": "acme.com", "identifier": "lead-3" }
+    {
+      "first_name": "Sara",
+      "last_name": "Lin",
+      "company_website": "acme.com",
+      "identifier": "lead-3"
+    }
   ]
 }
 ```
@@ -192,12 +199,12 @@ Output CSV columns: `email, first_name, last_name, full_name, job_title, company
 
 ## Cost & rate-limit notes
 
-| Action | Cost |
-| --- | --- |
-| `account` | free |
+| Action                             | Cost                                                                   |
+| ---------------------------------- | ---------------------------------------------------------------------- |
+| `account`                          | free                                                                   |
 | `search-person` / `search-company` | 1 credit per page (25 results); free if identical query within 30 days |
-| `enrich-person` / `enrich-company` | 1 credit per match; free if no match; free re-enrichment lifetime |
-| `enrich-person --mobile` | **10 credits per match** |
+| `enrich-person` / `enrich-company` | 1 credit per match; free if no match; free re-enrichment lifetime      |
+| `enrich-person --mobile`           | **10 credits per match**                                               |
 
 On `429` the CLI prints how long until the limit resets and exits with code 2.
 
@@ -205,11 +212,11 @@ On `429` the CLI prints how long until the limit resets and exits with code 2.
 
 ## Common errors
 
-| `error_code` | HTTP | Cause | Fix |
-| --- | --- | --- | --- |
-| `INVALID_API_KEY` | 401 | Missing / wrong `PROSPEO_API_KEY` | Re-do Setup S3 |
-| `INVALID_FILTERS` | 400 | Enum value mismatch — `filter_error` names the offending value | Fix value to match canonical enum in `reference/` |
-| `INVALID_DATAPOINTS` | 400 | Enrich input doesn't satisfy any valid identifier combination | Add another identifier (linkedin_url or company_website) |
-| `INSUFFICIENT_CREDITS` | 400 | Out of credits | Check `account`; upgrade plan or wait for renewal |
-| `NO_MATCH` | 400 | No record found (single enrich) | Try a different identifier; unbilled |
-| `RATE_LIMITED` | 429 | Per-minute or per-day limit hit | Wait `x-*-reset-seconds`, retry |
+| `error_code`           | HTTP | Cause                                                          | Fix                                                      |
+| ---------------------- | ---- | -------------------------------------------------------------- | -------------------------------------------------------- |
+| `INVALID_API_KEY`      | 401  | Missing / wrong `PROSPEO_API_KEY`                              | Re-do Setup S3                                           |
+| `INVALID_FILTERS`      | 400  | Enum value mismatch — `filter_error` names the offending value | Fix value to match canonical enum in `reference/`        |
+| `INVALID_DATAPOINTS`   | 400  | Enrich input doesn't satisfy any valid identifier combination  | Add another identifier (linkedin_url or company_website) |
+| `INSUFFICIENT_CREDITS` | 400  | Out of credits                                                 | Check `account`; upgrade plan or wait for renewal        |
+| `NO_MATCH`             | 400  | No record found (single enrich)                                | Try a different identifier; unbilled                     |
+| `RATE_LIMITED`         | 429  | Per-minute or per-day limit hit                                | Wait `x-*-reset-seconds`, retry                          |
