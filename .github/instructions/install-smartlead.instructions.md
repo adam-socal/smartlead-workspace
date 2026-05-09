@@ -45,6 +45,7 @@ smartlead --version
 ```
 
 If npm fails with a permissions error (`EACCES`), tell the user:
+
 > "npm needs permission to install global packages. The fix is one command — should I run `sudo npm install -g @smartlead/cli`? It will ask for your Mac password."
 
 Wait for confirmation before running anything with `sudo`.
@@ -62,6 +63,7 @@ cp .env.example .env
 ```
 
 Tell the user:
+
 > "I created a file called `.env` in the project. This is where your Smartlead API key lives. It is ignored by git, so it never gets committed."
 
 ---
