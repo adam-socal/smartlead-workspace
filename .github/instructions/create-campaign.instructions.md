@@ -75,11 +75,13 @@ The CLI takes JSON. Convert the copy.md content to this shape:
 ```
 
 Rules:
+
 - One block per step in `copy.md`.
 - `delay_in_days` is day-over-prior-step (step 1=0, step 2=3, step 3=4 if the schedule says Day 0/3/7).
 - Wrap each line of the body in `<p>...</p>`. Smartlead renders HTML.
 - Empty subject on follow-up steps auto-threads.
 - Keep `{{first_name}}`, `{{last_name}}`, `{{company_name}}` tokens as-is.
+- **NEVER include a `type: "MANUAL"` or manual step of any kind.** Manual steps freeze every lead at that point until a human marks it complete — there is no bulk completion option in Smartlead. All sequence steps must be email steps only. If a `type` field appears anywhere in the generated JSON, it must be `"EMAIL"` or omitted entirely.
 
 ```bash
 smartlead campaigns save-sequence \
@@ -165,12 +167,12 @@ rm sequences.json leads.json
 
 ## Common pitfalls
 
-| Symptom | Likely cause | Fix |
-| --- | --- | --- |
-| `save-sequence` rejects body | HTML not wrapped in `<p>` tags | Re-render markdown to HTML before building sequences.json |
-| Lead upload reports rows skipped | Missing email or token mismatch | Check `leads.csv` for blanks; ensure tokens used in copy exist as columns |
-| Campaign starts but nothing sends | No mailboxes attached, or all mailboxes still warming | `mailboxes list --warmup-status ACTIVE` and re-attach |
-| Bounce rate spikes day 1 | Skipped verification on `find-leads` | Pause campaign, re-run with `verified_emails_only: true` |
+| Symptom                           | Likely cause                                          | Fix                                                                       |
+| --------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| `save-sequence` rejects body      | HTML not wrapped in `<p>` tags                        | Re-render markdown to HTML before building sequences.json                 |
+| Lead upload reports rows skipped  | Missing email or token mismatch                       | Check `leads.csv` for blanks; ensure tokens used in copy exist as columns |
+| Campaign starts but nothing sends | No mailboxes attached, or all mailboxes still warming | `mailboxes list --warmup-status ACTIVE` and re-attach                     |
+| Bounce rate spikes day 1          | Skipped verification on `find-leads`                  | Pause campaign, re-run with `verified_emails_only: true`                  |
 
 ## What this instruction does NOT do
 
