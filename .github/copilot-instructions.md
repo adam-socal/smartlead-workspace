@@ -6,13 +6,14 @@ This workspace runs cold-email outbound campaigns end-to-end using the public **
 
 Five instruction files, four phases, one folder per campaign.
 
-| Instruction file | Role |
-| --- | --- |
-| `install-smartlead` | One-time setup. Installs the Smartlead CLI and walks through saving the API key. |
-| `outbound-system` | Orchestrator. Walks the 4 phases, owns the campaign folder convention. |
-| `find-leads` | Queries the lead provider (Smart Prospects or Prospeo) and writes `leads.csv`. |
-| `prospeo` | Operational skill for the Prospeo B2B contact API — setup and all CLI commands. |
-| `create-campaign` | Creates the Smartlead campaign, saves the sequence, uploads leads, starts sending. |
+| Instruction file    | Role                                                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `install-smartlead` | One-time setup. Installs the Smartlead CLI and walks through saving the API key.                                                                                                           |
+| `outbound-system`   | Orchestrator. Walks the phases, owns the campaign folder convention.                                                                                                                       |
+| `find-leads`        | Queries the lead provider (Smart Prospects or Prospeo) and writes `leads-raw.csv`.                                                                                                         |
+| `stage-leads`       | Normalizes any raw CSV to the Smartlead schema, validates emails, deduplicates across campaigns, writes `leads.csv`. Use when bringing in leads from Apollo, Clay, or any external source. |
+| `prospeo`           | Operational skill for the Prospeo B2B contact API — setup and all CLI commands.                                                                                                            |
+| `create-campaign`   | Creates the Smartlead campaign, saves the sequence, uploads leads, starts sending.                                                                                                         |
 
 Phases: **strategy → leads → copy → deploy**. Each writes one file into the campaign folder.
 
